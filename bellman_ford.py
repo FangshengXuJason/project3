@@ -16,22 +16,21 @@ def bellman_ford(graph, source):
     # Step 3: Check for negative weight cycles
     for node in graph:
         for neighbour in graph[node]:
-            # node -> src, start tracing
             if distance[neighbour] > distance[node] + graph[node][neighbour]:
-                print("Negative weight cycle")
-                # print("child node\t-->\t parent node")
+                print("Negative Weight Cycle Found: Start Backtracking")
                 actions = []
                 child = node  # hard coded
                 while child in predecessor.keys():
+                    print("{1}\t-->\t\t{0}".format(predecessor[child], child))
                     actions.append(child)
                     child = predecessor[child]
-                    # print("{0}\t-->\t\t{1}".format(child, predecessor[child]))
+
                     if child is node:  # hard coded
                         actions.append(child)
                         actions.reverse()
-                        print("actions", actions)
+                        print("actions: ", actions)
                         break
-                    break
+        break
     return distance, predecessor
 
 
@@ -58,10 +57,10 @@ if __name__ == '__main__':
     print(distance)
 
     graph = {
-        'a': {'b': 1},
+        'a': {'b': 1, 'd':1},
         'b': {'c': 2},
         'c': {'a': -4},
-        # 'd': {'a': 6},
+        'd': {'a': 6, 'c': 1},
     }
 
     distance, predecessor = bellman_ford(graph, source='a')
