@@ -55,7 +55,7 @@ class TestPublisher(object):
             quotes.append(quote)
 
         # occasionally put in some older timestamps to simulate out-of-order UDP messages
-        if random.random() < 0.10: # 10% of the time
+        if random.random() < 0.10:  # 10% of the time
             print('sending an out of order message')
             ts -= timedelta(seconds=random.gauss(10, 3), microseconds=random.gauss(200, 10))
             for quote in quotes:
@@ -85,7 +85,7 @@ class TestPublisher(object):
             self.socket.sendto(message, subscriber)
 
         # pick a time to wait until the next message
-        return 1.0  # FIXME randomize quiet time
+        return 1.0  # FIXME randomize quiet time (it was 1.0)
 
 
 class ForexProvider(object):
@@ -105,7 +105,7 @@ class ForexProvider(object):
 
     def run_forever(self):
         print('waiting for subscribers on {}'.format(self.subscription_requests))
-        next_timeout = 0.2  # FIXME
+        next_timeout = 1.50  # FIXME it was 0.2
         while True:
             events = self.selector.select(next_timeout)
             for key, mask in events:
