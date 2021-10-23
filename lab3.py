@@ -14,15 +14,15 @@ class Lab3:
         self.publisher_ip = PUBLISHER_ADDRESS[0]
         self.port = int(PUBLISHER_ADDRESS[1])
         self.timeout = 5  # seconds
-        self.subscriber = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+        self.sender = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.listener = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     def subscribe(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-            print("Sending Subscription Message to the Publisher")
-            sock.connect(self.publisher_address)
-            ip_bytes = socket.inet_aton(self.publisher_ip)
-            port_bytes = self.port.to_bytes(2, 'big')
-            sock.sendall(ip_bytes + port_bytes)
+
+        print("Sending Subscription Message to the Publisher")
+        self.sender.connect(self.publisher_address)
+        ip_bytes = socket.inet_aton(self.publisher_ip)
+        port_bytes = self.port.to_bytes(2, 'big')
+        self.sender.sendall(ip_bytes + port_bytes)
 
     def subscribe2(self):
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
@@ -33,6 +33,18 @@ class Lab3:
             sock.sendall(ip_bytes + port_bytes)
 
     def read(self):
+
+        self.listener.bind(self.publisher_address)
+        print('---------------------------------------')
+        #  print('Listening to Publisher:  {}'.format(publisher_address))
+        while True:
+            print('\nblocking, waiting to receive message')
+            data = self.listener.recv(BUF_SZ)
+
+            print('received {} bytes'.format(len(data)))
+            print(data)
+
+    def read2(self):
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             sock.bind(self.publisher_address)
             print('---------------------------------------')
