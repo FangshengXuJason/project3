@@ -16,7 +16,15 @@ class Lab3:
         self.timeout = 5  # seconds
 
     def subscribe(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
+            print("Sending Subscription Message to the Publisher")
+            sock.connect(self.publisher_address)
+            ip_bytes = socket.inet_aton(self.publisher_ip)
+            port_bytes = self.port.to_bytes(2, 'big')
+            sock.sendall(ip_bytes + port_bytes)
+
+    def subscribe2(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             print("Sending Subscription Message to the Publisher")
             sock.connect(self.publisher_address)
             ip_bytes = socket.inet_aton(self.publisher_ip)
@@ -24,7 +32,7 @@ class Lab3:
             sock.sendall(ip_bytes + port_bytes)
 
     def read(self):
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
             sock.bind(self.publisher_address)
             print('---------------------------------------')
             #  print('Listening to Publisher:  {}'.format(publisher_address))
