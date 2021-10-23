@@ -1,5 +1,6 @@
 import socket
 import sys
+import selectors
 
 BUF_SZ = 4096  # tcp receive buffer size
 # PUBLISHER_ADDRESS = ('localhost', 50403)
@@ -61,6 +62,5 @@ if __name__ == '__main__':
     print("testing lab3 subscriber")
     lab3 = Lab3()
     lab3.subscribe()
-    lab3.read()
-
+    lab3.read3()
     exit(1)
