@@ -3,7 +3,7 @@ import sys
 
 BUF_SZ = 4096  # tcp receive buffer size
 # PUBLISHER_ADDRESS = ('localhost', 50403)
-PUBLISHER_ADDRESS = ('localhost', 21212)
+PUBLISHER_ADDRESS = ('127.0.0.1', 21212)
 
 # print('starting up on {} port {}'.format(*PUBLISHER_ADDRESS))
 
@@ -14,6 +14,7 @@ class Lab3:
         self.publisher_ip = PUBLISHER_ADDRESS[0]
         self.port = int(PUBLISHER_ADDRESS[1])
         self.timeout = 5  # seconds
+        self.subscriber = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
     def subscribe(self):
         with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
