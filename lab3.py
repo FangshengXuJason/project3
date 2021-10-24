@@ -23,18 +23,20 @@ class Lab3:
         self.listener_ip, self.listener_port = self.listener_address
 
         self.timeout = 5  # seconds
+
     def subscribe(self):
 
         print("Sending Subscription Message to the Publisher")
         self.sender.connect(self.publisher_address)
+
         ip_bytes = socket.inet_aton(self.listener_ip)
         port_bytes = self.listener_port.to_bytes(2, 'big')
-
+        data = ip_bytes + port_bytes
         print("listener ip: ", self.listener_ip)
         print('listener port: ', self.listener_port)
         print("sending bytes: ", ip_bytes + port_bytes)
 
-        self.sender.sendall(ip_bytes + port_bytes)
+        send = self.sender.sendto(data, self.publisher_address)
 
     def read(self):
         self.listener.bind(self.publisher_address)
