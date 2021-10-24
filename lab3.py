@@ -39,7 +39,8 @@ class Lab3:
         send = self.sender.sendto(data, self.publisher_address)
 
     def read(self):
-        self.listener.bind(self.publisher_address)
+
+        # self.listener.bind(self.publisher_address)
         print('---------------------------------------')
         #  print('Listening to Publisher:  {}'.format(publisher_address))
         while True:
