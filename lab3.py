@@ -93,8 +93,8 @@ class Lab3:
         return struct.unpack('>d', data)
 
     @staticmethod
-    def deserialize_utcdatetime():
-        return 0
+    def deserialize_utcdatetime(data):
+        return int.from_bytes(data, 'big')
 
     @staticmethod
     def serialize_address():

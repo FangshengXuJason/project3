@@ -16,7 +16,7 @@ import fxp_bytes
 REQUEST_ADDRESS = ('localhost', 21212)
 REQUEST_SIZE = 12
 REVERSE_QUOTED = {'GBP', 'EUR', 'AUD'}
-SUBSCRIPTION_TIME = 19  # 10 * 60  # seconds
+SUBSCRIPTION_TIME = 19  # 10 * 60  # unit: second
 
 
 class TestPublisher(object):
@@ -59,6 +59,7 @@ class TestPublisher(object):
         if random.random() < 0.10:  # 10% of the time
             print('sending an out of order message')
             ts -= timedelta(seconds=random.gauss(10, 3), microseconds=random.gauss(200, 10))
+            print('time delta: ', timedelta)  # Added to debug
             for quote in quotes:
                 quote['timestamp'] = ts
 
@@ -86,7 +87,7 @@ class TestPublisher(object):
             self.socket.sendto(message, subscriber)
 
         # pick a time to wait until the next message
-        return 1.50  # FIXME randomize quiet time (it was 1.0)
+        return 5.0  # FIXME randomize quiet time (it was 1.0)
 
 
 class ForexProvider(object):
@@ -127,7 +128,7 @@ class ForexProvider(object):
         """
         listener = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         listener.bind(address)
-        listener.settimeout(1.50)  # FIXME
+        listener.settimeout(5.0)  # FIXME
         return listener
 
 
