@@ -57,8 +57,9 @@ class Lab3:
         """
         print("initializing a listener")
         listener = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        print(type(listener))
         listener.bind(('localhost', 0))  # use any free socket
-        listener.listen()  # set it for 1
+        listener.listen(1)  # set it for 1
         listener.setblocking(False)
         return listener, listener.getsockname()
 
