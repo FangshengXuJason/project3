@@ -50,9 +50,10 @@ class Lab3:
                 raise ValueError('socket closed')
             print('received {} bytes'.format(len(data)))
             end = len(data)
-            print("start to deserialize: data has ", end*2, " bytes")
-
-            print('price', self.deserialize_price(data[15, 22])[0])
+            print("start to deserialize: data has ", end, " bytes")
+            print("Currency: ", data[8: 12], "/", data[12:14], ' Price', self.deserialize_price(data[14: 22])[0])
+            # print("price in bytes: ", data[14: 22])
+            # print()
             print(data)
 
     @staticmethod
