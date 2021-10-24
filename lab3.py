@@ -1,7 +1,6 @@
 import socket
 import sys
-import selectors
-import pickle
+import struct
 
 BUF_SZ = 4096  # tcp receive buffer size
 # PUBLISHER_ADDRESS = ('localhost', 50403)
@@ -29,6 +28,7 @@ class Lab3:
         print("Sending Subscription Message to the Publisher")
         # self.sender.connect(self.publisher_address)
 
+        # serialize the listener address
         ip_bytes = socket.inet_aton(self.listener_ip)
         port_bytes = self.listener_port.to_bytes(2, 'big')
         data = ip_bytes + port_bytes
@@ -39,16 +39,20 @@ class Lab3:
         send = self.sender.sendto(data, self.publisher_address)
 
     def read(self):
-
-        # self.listener.bind(self.publisher_address)
         print('---------------------------------------')
         #  print('Listening to Publisher:  {}'.format(publisher_address))
+        start = 0
+        end = 0
         while True:
             print('\nblocking, waiting to receive message')
             data = self.listener.recv(BUF_SZ)
             if not data:
                 raise ValueError('socket closed')
             print('received {} bytes'.format(len(data)))
+            end = len(data)
+            print("start to deserialize: data has ", end*2, " bytes")
+
+            print('price', self.deserialize_price(data[15, 22])[0])
             print(data)
 
     @staticmethod
@@ -67,26 +71,25 @@ class Lab3:
         return listener, listener.getsockname()
 
     @staticmethod
-    def receive(publisher, buffer_size = BUF_SZ):
+    def receive(listener, buffer_size = BUF_SZ):
         """
         Receives and unpickles an incoming message from the given socket.
 
-        :param publisher: socket to recv from
+        :param listener: socket to recv
         :param buffer_size: buffer size of socket.recv
         :return: the de-serialized data received from publisher
         :raises: whatever socket.recv or pickle.loads could raise
         """
-        packet = publisher.recv(buffer_size)
+        packet = listener.recv(buffer_size)
         if not packet:
             raise ValueError('socket closed')
-        data = pickle.loads(packet) # TODO: Deserialize the data
-        # if type(data) == str:
-        #     data = (data, None)
-        return data
+        return packet
 
     @staticmethod
-    def deserialize_price():
-        return 0
+    def deserialize_price(data, little_endian=True):
+        if little_endian:
+            return struct.unpack('<d', data)
+        return struct.unpack('>d', data)
 
     @staticmethod
     def deserialize_utcdatetime():
@@ -104,5 +107,5 @@ if __name__ == '__main__':
     print("testing lab3 subscriber")
     lab3 = Lab3()
     lab3.subscribe()
-    lab3.read3()
+    lab3.read()
     exit(1)

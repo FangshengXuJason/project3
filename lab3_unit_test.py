@@ -1,7 +1,9 @@
 import ipaddress
 import socket
+import struct
 
 from array import  array
+
 
 PUBLISHER_ADDRESS = ('localhost', '50403')
 addr = '127.0.0.1'
@@ -23,5 +25,11 @@ def serialize_address(host: str, port: int) -> bytes:
     h = array('B', ip)
     return b''.join([h.tobytes(), p.tobytes()])
 
+def deserialize_price(data, little_endian  =  True):
+    if little_endian:
+        return struct.unpack('<d', data)
+    return struct.unpack('>d', data)
 
 print( serialize_address(addr, int(PUBLISHER_ADDRESS[1])) )
+print("converting 8 bytes data to a float number: ")
+
