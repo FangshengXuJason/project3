@@ -13,6 +13,7 @@ print(addr_bytes)
 print(port_bytes)
 print(addr_bytes + port_bytes)
 
+
 def serialize_address(host: str, port: int) -> bytes:
     p = array('H', [port])
     p.byteswap()

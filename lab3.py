@@ -27,7 +27,7 @@ class Lab3:
     def subscribe(self):
 
         print("Sending Subscription Message to the Publisher")
-        self.sender.connect(self.publisher_address)
+        # self.sender.connect(self.publisher_address)
 
         ip_bytes = socket.inet_aton(self.listener_ip)
         port_bytes = self.listener_port.to_bytes(2, 'big')
@@ -62,8 +62,8 @@ class Lab3:
         listener = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         print(type(listener))
         listener.bind(('localhost', 0))  # use any free socket
-        listener.listen(1)  # set it for 1
-        listener.setblocking(False)
+        # listener.listen(1)  # set it for 1
+        # listener.setblocking(False)
         return listener, listener.getsockname()
 
     @staticmethod
