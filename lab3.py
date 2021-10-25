@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 BUF_SZ = 4096  # tcp receive buffer size
 PUBLISHER_ADDRESS = ('127.0.0.1', 21212)
 MICROS_PER_SECOND = 1_000_000
-
+NUM_CURRENCY = 7
+DEFAULT_RATE = 0
 
 class Lab3:
     def __init__(self):
@@ -19,7 +20,11 @@ class Lab3:
         self.listener_ip, self.listener_port = self.listener_address
 
         self.timeout = 5  # seconds
-
+        self.rate_dict = [[]]
+        for row in range(NUM_CURRENCY):
+            for col in range(NUM_CURRENCY):
+                self.rate_dict[row][col] = (DEFAULT_RATE, False)
+        self.currencies = ()
     def subscribe(self):
         print("Sending Subscription Message to the Publisher")
         # self.sender.connect(self.publisher_address)
