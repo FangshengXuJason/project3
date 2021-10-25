@@ -72,7 +72,7 @@ class Lab3:
     @staticmethod
     def receive(listener, buffer_size = BUF_SZ):
         """
-        Receives and unpickles an incoming message from the given socket.
+        Receives an incoming message from the given socket.
 
         :param listener: socket to recv
         :param buffer_size: buffer size of socket.recv
@@ -102,7 +102,8 @@ class Lab3:
         return ip_bytes + port_bytes
 
     @staticmethod
-    def unmarshal_message():
+    def unmarshal_message(data: bytes):
+
         return -1
 
 if __name__ == '__main__':
