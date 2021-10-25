@@ -3,7 +3,7 @@ import struct
 from datetime import datetime, timedelta
 
 BUF_SZ = 4096  # tcp receive buffer size
-PUBLISHER_ADDRESS = ('127.0.0.1', 21212)
+PUBLISHER_ADDRESS = ('127.0.0.1', 50403)
 MICROS_PER_SECOND = 1_000_000
 NUM_CURRENCY = 7
 DEFAULT_RATE = 0
@@ -57,7 +57,7 @@ class Lab3:
                 start = end
                 end = end + 32
             print(self.rate_dict)
-            
+
     def unmarshal_message(self, data: bytes, start):
         time = self.deserialize_utcdatetime(data[start:start + 8])
         c1 = data[start + 8: start + 11]
