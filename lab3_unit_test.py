@@ -74,3 +74,7 @@ print("datetime now: ", dt_now)
 result = serialize_utcdatetime(dt_now)
 print("result in bytes to represent micro-seconds elapses since 1 January 1970: ", result)
 print("micro-seconds elapses since 1 January 1970: ", deserialize_utcdatetime(result))
+
+
+currencies = (b'USD', b'CAD', b'GBP')
+print("expect b'CAD': ", currencies[1])

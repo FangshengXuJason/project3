@@ -7,6 +7,7 @@ PUBLISHER_ADDRESS = ('127.0.0.1', 21212)
 MICROS_PER_SECOND = 1_000_000
 NUM_CURRENCY = 7
 DEFAULT_RATE = 0
+RATE_LIFETIME = 1.5
 
 class Lab3:
     def __init__(self):
@@ -20,11 +21,20 @@ class Lab3:
         self.listener_ip, self.listener_port = self.listener_address
 
         self.timeout = 5  # seconds
+
         self.rate_dict = [[]]
         for row in range(NUM_CURRENCY):
             for col in range(NUM_CURRENCY):
-                self.rate_dict[row][col] = (DEFAULT_RATE, False)
-        self.currencies = ()
+                self.rate_dict[row][col] = (DEFAULT_RATE, datetime(1970, 1, 1))
+
+        self.currencies = (b'USD', b'GBP', b'EUR', b'AUD', b'JPY', b'CHF', b'CAD')
+
+        self.currencies_to_index = {}
+        i = 0
+        for currency in self.currencies:
+            self.currencies_to_index[currency] = i
+            i += 1
+
     def subscribe(self):
         print("Sending Subscription Message to the Publisher")
         # self.sender.connect(self.publisher_address)
@@ -46,11 +56,22 @@ class Lab3:
                 self.unmarshal_message(data, start)
                 start = end
                 end = end + 32
-
+            print(self.rate_dict)
+            
     def unmarshal_message(self, data: bytes, start):
-        print("Datetime: ", self.deserialize_utcdatetime(data[start:start + 8]))
-        print("Currency: ", data[start + 8: start + 11], "/", data[start + 11:start + 14],
-              " Price: ", self.deserialize_price(data[start + 14:start + 22]), "\n")
+        time = self.deserialize_utcdatetime(data[start:start + 8])
+        c1 = data[start + 8: start + 11]
+        c2 = data[start + 11:start + 14]
+        price = self.deserialize_price(data[start + 14:start + 22])
+        print("Datetime: ", time, "Currency: ", c1, "/", c2,
+              " Price: ", price, "\n")
+        self.add_rate(price, c1, c2, time)
+
+    def c_to_i(self, currency):
+        return self.currencies_to_index[currency]
+
+    def add_rate(self, c1, c2, rate, publish_time: datetime):
+        self.rate_dict[self.c_to_i(c2)][self.c_to_i(c1)] = (rate, publish_time)
 
     @staticmethod
     def start_a_listener():
