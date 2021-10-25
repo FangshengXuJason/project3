@@ -29,10 +29,14 @@ def serialize_address(host: str, port: int) -> bytes:
     return b''.join([h.tobytes(), p.tobytes()])
 
 def deserialize_price(data: bytes, little_endian=True) -> float:
+    # if little_endian:
+    #     return int.from_bytes(data, 'little')
+    # return int.from_bytes(data, 'big')
     if little_endian:
-        return int.from_bytes(data, 'little')
-    return int.from_bytes(data, 'big')
+        return struct.unpack('<d', data)[0]
+    return struct.unpack('>d', data)[0]
 
+print('deserialize price: ', deserialize_price(b'\x05\x04\x03\x02\x01\xff?C'))
 
 
 def serialize_utcdatetime(utc: datetime) -> bytes:

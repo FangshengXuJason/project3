@@ -1,4 +1,5 @@
 import socket
+import struct
 from datetime import datetime, timedelta
 
 BUF_SZ = 4096  # tcp receive buffer size
@@ -31,7 +32,7 @@ class Lab3:
         # data = ip_bytes + port_bytes
         print("listener ip: ", self.listener_ip)
         print('listener port: ', self.listener_port)
-        data = self.serialize_address(self.listener_address)
+        data = self.serialize_address(self.listener_ip, self.listener_port)
         print("sending bytes: ", data)
         # print("sending bytes: ", ip_bytes + port_bytes)
 
@@ -39,20 +40,21 @@ class Lab3:
 
     def read(self):
         print('---------------------------------------')
-        #  print('Listening to Publisher:  {}'.format(publisher_address))
-        start = 0
-        end = 0
+        print('Listening to Publisher:  {}'.format(self.publisher_address))
         while True:
-            print('\nblocking, waiting to receive message')
-            data = self.listener.recv(BUF_SZ)
-            if not data:
-                raise ValueError('socket closed')
-            print('received {} bytes'.format(len(data)))
-            end = len(data)
-            print("start to deserialize: data has ", end, " bytes")
-            print("Currency: ", data[8: 12], "/", data[12:14], ' Price: ', self.deserialize_price(data[14: 22]))
+            data = self.receive(self.listener)
+            byte_len = len(data)
+            start = 0
+            end = 32
+            while end <= byte_len:
+                self.unmarshal_message(data, start)
+                start = end
+                end = end + 32
 
-            print(data)
+    def unmarshal_message(self, data: bytes, start):
+        print("Datetime: ", self.deserialize_utcdatetime(data[start:start + 8]))
+        print("Currency: ", data[start + 8: start + 11], "/", data[start + 11:start + 14],
+              " Price: ", self.deserialize_price(data[start + 14:start + 22]))
 
     @staticmethod
     def start_a_listener():
@@ -79,16 +81,18 @@ class Lab3:
         :return: the de-serialized data received from publisher
         :raises: whatever socket.recv or pickle.loads could raise
         """
-        packet = listener.recv(buffer_size)
-        if not packet:
+        print('\nblocking, waiting to receive message')
+        data = listener.recv(BUF_SZ)
+        if not data:
             raise ValueError('socket closed')
-        return packet
+        print('received {} bytes'.format(len(data)))
+        return data
 
     @staticmethod
     def deserialize_price(data: bytes, little_endian=True) -> float:
         if little_endian:
-            return int.from_bytes(data, 'little')
-        return int.from_bytes(data, 'big')
+            return struct.unpack('<d', data)[0]
+        return struct.unpack('>d', data)[0]
 
     @staticmethod
     def deserialize_utcdatetime(data: bytes) -> datetime:
@@ -101,10 +105,6 @@ class Lab3:
         port_bytes = port.to_bytes(2, 'big')
         return ip_bytes + port_bytes
 
-    @staticmethod
-    def unmarshal_message(data: bytes):
-
-        return -1
 
 if __name__ == '__main__':
     print("testing lab3 subscriber")
