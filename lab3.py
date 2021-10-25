@@ -6,10 +6,9 @@ BUF_SZ = 4096  # tcp receive buffer size
 PUBLISHER_ADDRESS = ('127.0.0.1', 21212)
 MICROS_PER_SECOND = 1_000_000
 
+
 class Lab3:
-
     def __init__(self):
-
         self.publisher_address = PUBLISHER_ADDRESS
         self.publisher_ip = PUBLISHER_ADDRESS[0]
         self.publisher_port = int(PUBLISHER_ADDRESS[1])
@@ -22,20 +21,12 @@ class Lab3:
         self.timeout = 5  # seconds
 
     def subscribe(self):
-
         print("Sending Subscription Message to the Publisher")
         # self.sender.connect(self.publisher_address)
 
         # serialize the listener address
-        ip_bytes = socket.inet_aton(self.listener_ip)
-        port_bytes = self.listener_port.to_bytes(2, 'big')
-        # data = ip_bytes + port_bytes
-        print("listener ip: ", self.listener_ip)
-        print('listener port: ', self.listener_port)
         data = self.serialize_address(self.listener_ip, self.listener_port)
         print("sending bytes: ", data)
-        # print("sending bytes: ", ip_bytes + port_bytes)
-
         send = self.sender.sendto(data, self.publisher_address)
 
     def read(self):
@@ -54,7 +45,7 @@ class Lab3:
     def unmarshal_message(self, data: bytes, start):
         print("Datetime: ", self.deserialize_utcdatetime(data[start:start + 8]))
         print("Currency: ", data[start + 8: start + 11], "/", data[start + 11:start + 14],
-              " Price: ", self.deserialize_price(data[start + 14:start + 22]))
+              " Price: ", self.deserialize_price(data[start + 14:start + 22]), "\n")
 
     @staticmethod
     def start_a_listener():

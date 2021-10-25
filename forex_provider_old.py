@@ -12,17 +12,16 @@ import random
 import fxp_bytes
 
 
-REQUEST_ADDRESS = ('localhost', 50403)
+#  REQUEST_ADDRESS = ('localhost', 50403)
+REQUEST_ADDRESS = ('localhost', 21212)
 REQUEST_SIZE = 12
 REVERSE_QUOTED = {'GBP', 'EUR', 'AUD'}
-SUBSCRIPTION_TIME = 19  # 10 * 60  # seconds
+SUBSCRIPTION_TIME = 19  # 10 * 60  # unit: second
 
 
 class TestPublisher(object):
     """
     Publishes occasional messages
-    Updated to ensure 4-way cycle markets are always in same order 
-      e.g.  always CAD/EUR, not sometimes EUR/CAD
     """
     def __init__(self):
         self.subscriptions = {}
@@ -32,17 +31,6 @@ class TestPublisher(object):
     def register_subscription(self, subscriber):
         print('registering subscription for {}'.format(subscriber))
         self.subscriptions[subscriber] = datetime.utcnow()
-
-    @staticmethod
-    # ensure market names always in correct order, alpha sort e.g. CAD/EUR
-    def format_market_order(curr_a, curr_b):
-        if (curr_a > curr_b):
-            curr_first = curr_b
-            curr_second = curr_a
-        else:
-            curr_first = curr_a
-            curr_second = curr_b
-        return "{}/{}".format(curr_first, curr_second)
 
     def publish(self):
         # remove expired subscriptions
@@ -68,9 +56,10 @@ class TestPublisher(object):
             quotes.append(quote)
 
         # occasionally put in some older timestamps to simulate out-of-order UDP messages
-        if random.random() < 0.10: # 10% of the time
+        if random.random() < 0.10:  # 10% of the time
             print('sending an out of order message')
             ts -= timedelta(seconds=random.gauss(10, 3), microseconds=random.gauss(200, 10))
+            print('time delta: ', timedelta)  # Added to debug
             for quote in quotes:
                 quote['timestamp'] = ts
 
@@ -87,11 +76,9 @@ class TestPublisher(object):
                 print('putting in a 3-way cycle')
                 quotes.append({'cross': '{}/{}'.format(xxx, yyy), 'price': rate})
             else:
-                print('putting in a 4-way cycle - v2')
-                market_name = TestPublisher.format_market_order("CAD",xxx)
-                quotes.append({'cross': '{}'.format(market_name), 'price': rate/2})
-                market_name = TestPublisher.format_market_order("CAD",yyy)
-                quotes.append({'cross': '{}'.format(market_name), 'price': rate*2})
+                print('putting in a 4-way cycle')
+                quotes.append({'cross': '{}/CAD'.format(xxx), 'price': rate/2})
+                quotes.append({'cross': 'CAD/{}'.format(yyy), 'price': rate*2})
 
         # send the messages to current subscribers
         message = fxp_bytes.marshal_message(quotes)
@@ -100,7 +87,7 @@ class TestPublisher(object):
             self.socket.sendto(message, subscriber)
 
         # pick a time to wait until the next message
-        return 1.0  # FIXME randomize quiet time
+        return 5.0  # FIXME randomize quiet time (it was 1.0)
 
 
 class ForexProvider(object):
@@ -119,10 +106,10 @@ class ForexProvider(object):
         self.publisher = publisher_class()
 
     def run_forever(self):
-        print('waiting for subscribers on {}  - v2'.format(self.subscription_requests))
-        next_timeout = 0.2  # FIXME
+        print('waiting for subscribers on {}'.format(self.subscription_requests))
+        next_timeout = 2.0  # FIXME it was 0.2
         while True:
-            events = self.selector.select(next_timeout)
+            events = self.selector.select(next_timeout)  # 1.50 seconds
             for key, mask in events:
                 self.register_subscription()
             next_timeout = self.publisher.publish()
@@ -141,14 +128,14 @@ class ForexProvider(object):
         """
         listener = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         listener.bind(address)
-        listener.settimeout(0.2)  # FIXME
+        listener.settimeout(5.0)  # FIXME
         return listener
 
 
 if __name__ == '__main__':
-    # if REQUEST_ADDRESS[1] == 50403:
-    #     print('Pick your own port for testing!')
-    #     print('Modify REQUEST_ADDRESS above to use localhost and some random port')
-    #     exit(1)
+    if REQUEST_ADDRESS[1] == 50403:
+        print('Pick your own port for testing!')
+        print('Modify REQUEST_ADDRESS above to use localhost and some random port')
+        exit(1)
     fxp = ForexProvider(REQUEST_ADDRESS, TestPublisher)
     fxp.run_forever()
