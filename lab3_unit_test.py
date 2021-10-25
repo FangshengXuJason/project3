@@ -2,7 +2,7 @@ import ipaddress
 import socket
 import struct
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from array import  array
 
 MAX_QUOTES_PER_MESSAGE = 50
@@ -28,10 +28,10 @@ def serialize_address(host: str, port: int) -> bytes:
     h = array('B', ip)
     return b''.join([h.tobytes(), p.tobytes()])
 
-def deserialize_price(data, little_endian  =  True):
+def deserialize_price(data: bytes, little_endian=True) -> float:
     if little_endian:
-        return struct.unpack('<d', data)
-    return struct.unpack('>d', data)
+        return int.from_bytes(data, 'little')
+    return int.from_bytes(data, 'big')
 
 
 
@@ -60,17 +60,9 @@ def serialize_utcdatetime(utc: datetime) -> bytes:
 
 print("result in bytes to represent micro-seconds elapses since 1 January 1970: ", serialize_utcdatetime(datetime(1971, 12, 10, 1, 2, 3, 64000)))
 
-def deserialize_utcdatetime(data, little_endian = False):
-
-    if little_endian:
-        return struct.unpack('<d', data)
-    return struct.unpack('>d', data)
-
-serialized_time = b'\x00\x007\xa3e\x8e\xf2\xc0'
-
-
-print("micro-seconds elapses since 1 January 1970: ", deserialize_utcdatetime(serialized_time))
-print()
+def deserialize_utcdatetime(data: bytes) -> datetime:
+    micros = int.from_bytes(data, 'big')
+    return datetime(1970, 1, 1) + timedelta(microseconds=micros)
 
 dt_now = datetime.utcnow()
 print("datetime now: ", dt_now)

@@ -1,12 +1,9 @@
 import socket
-import sys
-import struct
+from datetime import datetime, timedelta
 
 BUF_SZ = 4096  # tcp receive buffer size
-# PUBLISHER_ADDRESS = ('localhost', 50403)
 PUBLISHER_ADDRESS = ('127.0.0.1', 21212)
-
-# print('starting up on {} port {}'.format(*PUBLISHER_ADDRESS))
+MICROS_PER_SECOND = 1_000_000
 
 class Lab3:
 
@@ -31,10 +28,12 @@ class Lab3:
         # serialize the listener address
         ip_bytes = socket.inet_aton(self.listener_ip)
         port_bytes = self.listener_port.to_bytes(2, 'big')
-        data = ip_bytes + port_bytes
+        # data = ip_bytes + port_bytes
         print("listener ip: ", self.listener_ip)
         print('listener port: ', self.listener_port)
-        print("sending bytes: ", ip_bytes + port_bytes)
+        data = self.serialize_address(self.listener_address)
+        print("sending bytes: ", data)
+        # print("sending bytes: ", ip_bytes + port_bytes)
 
         send = self.sender.sendto(data, self.publisher_address)
 
@@ -51,9 +50,8 @@ class Lab3:
             print('received {} bytes'.format(len(data)))
             end = len(data)
             print("start to deserialize: data has ", end, " bytes")
-            print("Currency: ", data[8: 12], "/", data[12:14], ' Price', self.deserialize_price(data[14: 22])[0])
-            # print("price in bytes: ", data[14: 22])
-            # print()
+            print("Currency: ", data[8: 12], "/", data[12:14], ' Price: ', self.deserialize_price(data[14: 22]))
+
             print(data)
 
     @staticmethod
@@ -87,18 +85,21 @@ class Lab3:
         return packet
 
     @staticmethod
-    def deserialize_price(data, little_endian=True):
+    def deserialize_price(data: bytes, little_endian=True) -> float:
         if little_endian:
-            return struct.unpack('<d', data)
-        return struct.unpack('>d', data)
-
-    @staticmethod
-    def deserialize_utcdatetime(data):
+            return int.from_bytes(data, 'little')
         return int.from_bytes(data, 'big')
 
     @staticmethod
-    def serialize_address():
-        return 0
+    def deserialize_utcdatetime(data: bytes) -> datetime:
+        micros = int.from_bytes(data, 'big')
+        return datetime(1970, 1, 1) + timedelta(microseconds=micros)
+
+    @staticmethod
+    def serialize_address(ip, port) -> bytes:
+        ip_bytes = socket.inet_aton(ip)
+        port_bytes = port.to_bytes(2, 'big')
+        return ip_bytes + port_bytes
 
     @staticmethod
     def unmarshal_message():
