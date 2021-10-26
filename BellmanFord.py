@@ -1,7 +1,6 @@
-from typing import Tuple, List
+from typing import List
 from math import log
-from datetime import datetime, timedelta
-import time
+from datetime import datetime
 
 RATE_LIFETIME = 1.5
 
@@ -19,8 +18,8 @@ class BellmanFord:
                     result[row][col] = float("Inf")
                 else:
                     result[row][col] = -log(graph[row][col][0])
-        for row in result:
-            print(row)
+        # for row in result:
+        #     print(row)
         return result
 
     def expired(self, publish_time: datetime):
@@ -53,17 +52,13 @@ class BellmanFord:
         for source_curr in range(n):
             for dest_curr in range(n):
                 if min_dist[dest_curr] > min_dist[source_curr] + trans_graph[source_curr][dest_curr]:
-                    # negative cycle exists
+
                     print_cycle = [dest_curr, source_curr]
                     while pre[source_curr] not in print_cycle:
+                        # print("{1}\t-->\t\t{0}".format(self.currencies[pre[source_curr]], self.currencies[source_curr]))
                         print_cycle.append(pre[source_curr])
                         source_curr = pre[source_curr]
                     print_cycle.append(pre[source_curr])
 
                     print("Arbitrage Opportunity: ")
                     print(" --> ".join([self.currencies[p] for p in print_cycle[::-1]]))
-
-    # def print_trade_detail(self, rates_matrix, print_cycle):
-    #     num = len(print_cycle)
-    #     for i in range(num):
-    #         print(print_cycle[])

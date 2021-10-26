@@ -24,7 +24,8 @@ class Lab3:
         self.listener_ip, self.listener_port = self.listener_address
 
         self.rates_matrix = [[]]
-        self.rates_matrix = [[(DEFAULT_RATE, datetime(2020, 1, 1)) for c in range(NUM_CURRENCY)] for r in range(NUM_CURRENCY)]
+        self.rates_matrix = [[(DEFAULT_RATE, datetime(2020, 1, 1))
+                              for c in range(NUM_CURRENCY)] for r in range(NUM_CURRENCY)]
 
         self.currencies = ('USD', 'GBP', 'EUR', 'AUD', 'JPY', 'CHF', 'CAD')
 
@@ -54,8 +55,8 @@ class Lab3:
                 start = end
                 end = end + 32
             opportunity = BellmanFord(self.currencies)
-            for row in self.rates_matrix:
-                print(row)
+            # for row in self.rates_matrix:
+            #     print(row)
             opportunity.arbitrage(self.rates_matrix)
 
     def unmarshal_message(self, data: bytes, start):
