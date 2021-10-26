@@ -3,6 +3,8 @@ import struct
 import sys
 from datetime import datetime, timedelta
 
+from BellmanFord import BellmanFord
+
 BUF_SZ = 4096  # tcp receive buffer size
 PUBLISHER_ADDRESS = ('127.0.0.1', 50403)
 MICROS_PER_SECOND = 1_000_000
@@ -62,6 +64,8 @@ class Lab3:
             # for r in self.rate_matrix:
             #     print(r)
             #     print()
+            opportunity = BellmanFord(self.currencies)
+            opportunity.arbitrage(self.rate_matrix)
 
     def unmarshal_message(self, data: bytes, start):
         time = self.deserialize_utcdatetime(data[start:start + 8])

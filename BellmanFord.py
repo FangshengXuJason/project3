@@ -23,15 +23,13 @@ class BellmanFord:
             print(row)
         return result
 
-
     def expired(self, publish_time: datetime):
-        ts = datetime.utcnow()
-        if ts - publish_time.total_seconds() >= RATE_LIFETIME:
+        duration = (datetime.utcnow() - publish_time).total_seconds()
+        if duration >= RATE_LIFETIME:
             return True
         return False
 
-
-    def arbitrage(self, currency_tuple: tuple, rates_matrix):
+    def arbitrage(self, rates_matrix):
         """ Calculates arbitrage situations and prints out the details of this calculations"""
 
         trans_graph = self.negate_logarithm_convertor(rates_matrix)
