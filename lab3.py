@@ -83,6 +83,7 @@ class Lab3:
         i2 = self.c_to_i(c1)
         self.rate_matrix[i2][i1] = (rate, publish_time)
         self.rate_matrix[i1][i2] = (rate, publish_time)
+        # TODO: output only valid data to bellman ford algorithm
 
     @staticmethod
     def bytes_to_string(data: bytes) -> str:
