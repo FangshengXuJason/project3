@@ -70,18 +70,16 @@ class Lab3:
         # direction of the vertex:  c1 -> c2
         self.add_rate(c1, c2, price, time)  # c1 -> c1
 
-    def c_to_i(self, currency: str) -> int:
-        return self.currencies_to_index[currency]
-
     def add_rate(self, c1, c2, rate, publish_time: datetime):
         # index of c1& c2: c2 c1
         # this is to adapt  to bellman ford algorithm
         i1 = self.c_to_i(c1)
         i2 = self.c_to_i(c2)
-        print('c1 -> index', i1)
-        print('c2 -> index', i2)
         self.rates_matrix[i2][i1] = (rate, publish_time)
         self.rates_matrix[i1][i2] = (rate, publish_time)
+
+    def c_to_i(self, currency: str) -> int:
+        return self.currencies_to_index[currency]
 
     @staticmethod
     def bytes_to_string(data: bytes) -> str:

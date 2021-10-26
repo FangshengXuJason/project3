@@ -53,20 +53,17 @@ class BellmanFord:
         for source_curr in range(n):
             for dest_curr in range(n):
                 if min_dist[dest_curr] > min_dist[source_curr] + trans_graph[source_curr][dest_curr]:
-                    print("\n"
-                          "-log sum: ", min_dist[source_curr] + trans_graph[source_curr][dest_curr])
-                    # negative cycle exists, and use the predecessor chain to print the cycle
+                    # negative cycle exists
                     print_cycle = [dest_curr, source_curr]
-                    # Start from the source and go backwards until you see the source vertex again or any vertex that already exists in print_cycle array
                     while pre[source_curr] not in print_cycle:
                         print_cycle.append(pre[source_curr])
                         source_curr = pre[source_curr]
                     print_cycle.append(pre[source_curr])
+
                     print("Arbitrage Opportunity: ")
                     print(" --> ".join([self.currencies[p] for p in print_cycle[::-1]]))
 
-# if __name__ == "__main__":
-#     arbitrage(currencies, rates)
-
-# Time Complexity: O(N^3)
-# Space Complexity: O(N^2)
+    # def print_trade_detail(self, rates_matrix, print_cycle):
+    #     num = len(print_cycle)
+    #     for i in range(num):
+    #         print(print_cycle[])
