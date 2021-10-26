@@ -12,14 +12,15 @@ class BellmanFord:
 
     def negate_logarithm_convertor(self, graph) -> List[List[float]]:
         """ log of each rate in graph and negate it"""
-        result = [[float("Inf") for c in range(self.size)] for r in range(self.size)]
+        result = [[1 for c in range(self.size)] for r in range(self.size)]
         for row in range(self.size):
             for col in range(self.size):
-                if not self.expired(graph[row][col][1]):
-                    # result[row][col] = float("Inf")
+                if self.expired(graph[row][col][1]):
+                    result[row][col] = float("Inf")
+                else:
                     result[row][col] = -log(graph[row][col][0])
-        # for row in result:
-        #     print(row)
+        for row in result:
+            print(row)
         return result
 
     def expired(self, publish_time: datetime):
@@ -32,9 +33,6 @@ class BellmanFord:
         """ Calculates arbitrage situations and prints out the details of this calculations"""
 
         trans_graph = self.negate_logarithm_convertor(rates_matrix)
-
-        # Pick any source vertex -- we can run Bellman-Ford from any vertex and get the right result
-
         source = 0
         n = len(trans_graph)
         min_dist = [float('inf')] * n

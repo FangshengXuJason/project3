@@ -24,10 +24,8 @@ class Lab3:
         self.listener, self.listener_address = self.start_a_listener()
         self.listener_ip, self.listener_port = self.listener_address
 
-        self.timeout = 5  # seconds
-
-        self.rate_matrix = [[]]
-        self.rate_matrix = [[(DEFAULT_RATE, datetime(1970, 1, 1)) for c in range(NUM_CURRENCY)] for r in range(NUM_CURRENCY)]
+        self.rates_matrix = [[]]
+        self.rates_matrix = [[(DEFAULT_RATE, datetime(2020, 1, 1)) for c in range(NUM_CURRENCY)] for r in range(NUM_CURRENCY)]
 
         self.currencies = ('USD', 'GBP', 'EUR', 'AUD', 'JPY', 'CHF', 'CAD')
 
@@ -39,8 +37,6 @@ class Lab3:
 
     def subscribe(self):
         print("Sending Subscription Message to the Publisher")
-        # self.sender.connect(self.publisher_address)
-
         # serialize the listener address
         data = self.serialize_address(self.listener_ip, self.listener_port)
         print("sending bytes: ", data)
@@ -59,7 +55,9 @@ class Lab3:
                 start = end
                 end = end + 32
             opportunity = BellmanFord(self.currencies)
-            opportunity.arbitrage(self.rate_matrix)
+            for row in self.rates_matrix:
+                print(row)
+            opportunity.arbitrage(self.rates_matrix)
 
     def unmarshal_message(self, data: bytes, start):
         time = self.deserialize_utcdatetime(data[start:start + 8])
@@ -80,10 +78,11 @@ class Lab3:
         # index of c1& c2: c2 c1
         # this is to adapt  to bellman ford algorithm
         i1 = self.c_to_i(c1)
-        i2 = self.c_to_i(c1)
-        self.rate_matrix[i2][i1] = (rate, publish_time)
-        self.rate_matrix[i1][i2] = (rate, publish_time)
-        # TODO: output only valid data to bellman ford algorithm
+        i2 = self.c_to_i(c2)
+        print('c1 -> index', i1)
+        print('c2 -> index', i2)
+        self.rates_matrix[i2][i1] = (rate, publish_time)
+        self.rates_matrix[i1][i2] = (rate, publish_time)
 
     @staticmethod
     def bytes_to_string(data: bytes) -> str:
@@ -100,8 +99,6 @@ class Lab3:
         listener = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         print(type(listener))
         listener.bind(('localhost', 0))  # use any free socket
-        # listener.listen(1)  # set it for 1
-        # listener.setblocking(False)
         return listener, listener.getsockname()
 
     @staticmethod
