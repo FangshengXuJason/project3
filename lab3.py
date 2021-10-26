@@ -24,8 +24,8 @@ class Lab3:
 
         self.timeout = 5  # seconds
 
-        self.rate_dict = [[]]
-        self.rate_dict = [[(DEFAULT_RATE, datetime(1970, 1, 1)) for c in range(NUM_CURRENCY)] for r in range(NUM_CURRENCY)]
+        self.rate_matrix = [[]]
+        self.rate_matrix = [[(DEFAULT_RATE, datetime(1970, 1, 1)) for c in range(NUM_CURRENCY)] for r in range(NUM_CURRENCY)]
         # for row in range(NUM_CURRENCY):
         #     for col in range(NUM_CURRENCY):
         #         self.rate_dict[row][col] = (DEFAULT_RATE, datetime(1970, 1, 1))
@@ -37,7 +37,6 @@ class Lab3:
         for currency in self.currencies:
             self.currencies_to_index[currency] = i
             i += 1
-        print(self.currencies_to_index)
 
     def subscribe(self):
         print("Sending Subscription Message to the Publisher")
@@ -60,33 +59,34 @@ class Lab3:
                 self.unmarshal_message(data, start)
                 start = end
                 end = end + 32
-            print(self.rate_dict)
+            # for r in self.rate_matrix:
+            #     print(r)
+            #     print()
 
     def unmarshal_message(self, data: bytes, start):
         time = self.deserialize_utcdatetime(data[start:start + 8])
-        # c1 = data[start + 8: start + 11].decode('UTF-8')
         c1 = self.bytes_to_string(data[start + 8: start + 11])
-        # c2 = data[start + 11:start + 14].decode('UTF-8')
         c2 = self.bytes_to_string(data[start + 11:start + 14])
         price = self.deserialize_price(data[start + 14:start + 22])
         print("Datetime: ", time, "Currency: ", c1, "/", c2,
               " Price: ", price, "\n")
         # price = c2/c1 , cost of the vertex:  -log(price)
         # direction of the vertex:  c1 -> c2
+        self.add_rate(c1, c2, price, time)  # c1 -> c1
 
-        # self.add_rate(price, c1, c2, time) # c1 -> c1
 
-    def c_to_i(self, currency):
+    def c_to_i(self, currency: str) -> int:
         return self.currencies_to_index[currency]
 
     def add_rate(self, c1, c2, rate, publish_time: datetime):
         # index of c1& c2: c2 c1
         # this is to adapt  to bellman ford algorithm
-        self.rate_dict[self.c_to_i(c2)][self.c_to_i(c1)] = (rate, publish_time)
+        self.rate_matrix[self.c_to_i(c2)][self.c_to_i(c1)] = (rate, publish_time)
 
     @staticmethod
     def bytes_to_string(data: bytes) -> str:
         return data.decode('UTF-8')
+
     @staticmethod
     def start_a_listener():
         """
