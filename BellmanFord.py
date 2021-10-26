@@ -4,6 +4,7 @@ from datetime import datetime
 
 RATE_LIFETIME = 1.5
 
+
 class BellmanFord:
     def __init__(self, currencies):
         self.currencies = currencies
@@ -58,7 +59,8 @@ class BellmanFord:
                         # print("{1}\t-->\t\t{0}".format(self.currencies[pre[source_curr]], self.currencies[source_curr]))
                         print_cycle.append(pre[source_curr])
                         source_curr = pre[source_curr]
-                    print_cycle.append(pre[source_curr])
 
+                    print_cycle.append(pre[source_curr])
                     print("Arbitrage Opportunity: ")
                     print(" --> ".join([self.currencies[p] for p in print_cycle[::-1]]))
+            break

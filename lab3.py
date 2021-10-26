@@ -77,7 +77,7 @@ class Lab3:
         i1 = self.c_to_i(c1)
         i2 = self.c_to_i(c2)
         self.rates_matrix[i2][i1] = (rate, publish_time)
-        self.rates_matrix[i1][i2] = (rate, publish_time)
+        self.rates_matrix[i1][i2] = (1/rate, publish_time)
 
     def c_to_i(self, currency: str) -> int:
         return self.currencies_to_index[currency]
