@@ -63,4 +63,4 @@ class BellmanFord:
                     print_cycle.append(pre[source_curr])
                     print("Arbitrage Opportunity: ")
                     print(" --> ".join([self.currencies[p] for p in print_cycle[::-1]]))
-            break
+                break # stop
