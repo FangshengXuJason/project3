@@ -28,9 +28,6 @@ class Lab3:
 
         self.rate_matrix = [[]]
         self.rate_matrix = [[(DEFAULT_RATE, datetime(1970, 1, 1)) for c in range(NUM_CURRENCY)] for r in range(NUM_CURRENCY)]
-        # for row in range(NUM_CURRENCY):
-        #     for col in range(NUM_CURRENCY):
-        #         self.rate_dict[row][col] = (DEFAULT_RATE, datetime(1970, 1, 1))
 
         self.currencies = ('USD', 'GBP', 'EUR', 'AUD', 'JPY', 'CHF', 'CAD')
 
@@ -61,9 +58,6 @@ class Lab3:
                 self.unmarshal_message(data, start)
                 start = end
                 end = end + 32
-            # for r in self.rate_matrix:
-            #     print(r)
-            #     print()
             opportunity = BellmanFord(self.currencies)
             opportunity.arbitrage(self.rate_matrix)
 
@@ -72,8 +66,9 @@ class Lab3:
         c1 = self.bytes_to_string(data[start + 8: start + 11])
         c2 = self.bytes_to_string(data[start + 11:start + 14])
         price = self.deserialize_price(data[start + 14:start + 22])
-        print("Datetime: ", time, "Currency: ", c1, "/", c2,
-              " Price: ", price, "\n")
+        # print("Datetime: ", time, "Currency: ", c1, "/", c2,
+        #       " Price: ", price, "\n")
+
         # price = c2/c1 , cost of the vertex:  -log(price)
         # direction of the vertex:  c1 -> c2
         self.add_rate(c1, c2, price, time)  # c1 -> c1

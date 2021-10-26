@@ -100,7 +100,7 @@ class TestPublisher(object):
             self.socket.sendto(message, subscriber)
 
         # pick a time to wait until the next message
-        return 1.5  # FIXME randomize quiet time
+        return 0.5  # FIXME randomize quiet time
 
 
 class ForexProvider(object):
@@ -120,7 +120,7 @@ class ForexProvider(object):
 
     def run_forever(self):
         print('waiting for subscribers on {}  - v2'.format(self.subscription_requests))
-        next_timeout = 2.0  # FIXME
+        next_timeout = 0.5  # FIXME
         while True:
             events = self.selector.select(next_timeout)
             for key, mask in events:
@@ -141,7 +141,7 @@ class ForexProvider(object):
         """
         listener = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         listener.bind(address)
-        listener.settimeout(2.0)  # FIXME
+        listener.settimeout(0.5)  # FIXME
         return listener
 
 

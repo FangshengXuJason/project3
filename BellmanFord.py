@@ -12,15 +12,14 @@ class BellmanFord:
 
     def negate_logarithm_convertor(self, graph) -> List[List[float]]:
         """ log of each rate in graph and negate it"""
-        result = [[]]
+        result = [[float("Inf") for c in range(self.size)] for r in range(self.size)]
         for row in range(self.size):
             for col in range(self.size):
-                if self.expired(graph[row][col][1]):
-                    result[row][col] = float("Inf")
-                else:
-                    result[row][col] = graph[row][col][0]
-        for row in result:
-            print(row)
+                if not self.expired(graph[row][col][1]):
+                    # result[row][col] = float("Inf")
+                    result[row][col] = -log(graph[row][col][0])
+        # for row in result:
+        #     print(row)
         return result
 
     def expired(self, publish_time: datetime):
