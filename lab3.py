@@ -9,6 +9,7 @@ NUM_CURRENCY = 7
 DEFAULT_RATE = 0
 RATE_LIFETIME = 1.5
 
+
 class Lab3:
     def __init__(self):
         self.publisher_address = PUBLISHER_ADDRESS
@@ -23,9 +24,10 @@ class Lab3:
         self.timeout = 5  # seconds
 
         self.rate_dict = [[]]
-        for row in range(NUM_CURRENCY):
-            for col in range(NUM_CURRENCY):
-                self.rate_dict[row][col] = (DEFAULT_RATE, datetime(1970, 1, 1))
+        self.rate_dict = [[(DEFAULT_RATE, datetime(1970, 1, 1)) for c in range(NUM_CURRENCY)] for r in range(NUM_CURRENCY)]
+        # for row in range(NUM_CURRENCY):
+        #     for col in range(NUM_CURRENCY):
+        #         self.rate_dict[row][col] = (DEFAULT_RATE, datetime(1970, 1, 1))
 
         self.currencies = (b'USD', b'GBP', b'EUR', b'AUD', b'JPY', b'CHF', b'CAD')
 
@@ -65,12 +67,16 @@ class Lab3:
         price = self.deserialize_price(data[start + 14:start + 22])
         print("Datetime: ", time, "Currency: ", c1, "/", c2,
               " Price: ", price, "\n")
-        self.add_rate(price, c1, c2, time)
+        # price = c2/c1 , cost of the vertex:  -log(price)
+        # direction of the vertex:  c1 -> c2
+        self.add_rate(price, c1, c2, time) # c1 -> c1
 
     def c_to_i(self, currency):
-        return self.currencies_to_index[currency]
+        return self.currencies_to_index[currency] # TODO: KEY ERROR
 
     def add_rate(self, c1, c2, rate, publish_time: datetime):
+        # index of c1& c2: c2 c1
+        # this is to adapt  to bellman ford algorithm
         self.rate_dict[self.c_to_i(c2)][self.c_to_i(c1)] = (rate, publish_time)
 
     @staticmethod
