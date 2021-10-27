@@ -25,7 +25,7 @@ class Lab3:
 
     def read(self):
         print('---------------------------------------')
-        print('Listening to Publisher:  {}'.format(self.subscriber.publisher_address))
+        # print('Listening to Publisher:  {}'.format(self.subscriber.publisher_address)
         while True:
             data = self.subscriber.listener_receive()
             byte_len = len(data)
@@ -41,7 +41,6 @@ class Lab3:
             opportunity.arbitrage(self.rates_matrix)
 
     def run_forever(self):
-        self.subscriber.subscribe()
         self.read()
 
     def unmarshal_message(self, data: bytes, start):
