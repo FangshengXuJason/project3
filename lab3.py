@@ -1,3 +1,4 @@
+import fxp_bytes_subscriber
 from fxp_bytes_subscriber import Subscriber
 import struct
 from datetime import datetime, timedelta
@@ -8,8 +9,8 @@ DEFAULT_RATE = 0
 RATE_LIFETIME = 1.5
 
 class Lab3:
-    def __int__(self):
-        self.subscriber = Subscriber()
+    def __int__(self) -> object:
+        self.subscriber = fxp_bytes_subscriber.Subscriber()
 
         self.rates_matrix = [[]]
         self.rates_matrix = [[(DEFAULT_RATE, datetime(2020, 1, 1))

@@ -24,6 +24,7 @@ class Subscriber:
         self.listener_ip, self.listener_port = self.listener_address
         self.subscribe()
 
+
     def subscribe(self):
         print("Sending Subscription Message to the Publisher")
         # serialize the listener address
