@@ -1,14 +1,13 @@
 from fxp_bytes_subscriber import Subscriber
-import socket
 import struct
 from datetime import datetime, timedelta
-from BellmanFord import BellmanFord
+from bellman_ford import BellmanFord
 
 NUM_CURRENCY = 7
 DEFAULT_RATE = 0
 RATE_LIFETIME = 1.5
 
-class lab3:
+class Lab3:
     def __int__(self):
         self.subscriber = Subscriber()
 
@@ -43,6 +42,7 @@ class lab3:
 
     def run_forever(self):
         self.subscriber.subscribe()
+        self.read()
 
     def unmarshal_message(self, data: bytes, start):
         time = self.deserialize_utcdatetime(data[start:start + 8])
@@ -85,7 +85,7 @@ class lab3:
 
 if __name__ == '__main__':
     print("testing lab3 subscriber")
-    lab3 = Subscriber()
-    lab3.subscribe()
-    lab3.read()
+    lab3 = Lab3()
+    lab3.run_forever()
+
     exit(1)

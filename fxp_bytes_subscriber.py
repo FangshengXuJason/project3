@@ -22,13 +22,14 @@ class Subscriber:
 
         self.listener, self.listener_address = self.start_a_listener()
         self.listener_ip, self.listener_port = self.listener_address
+        self.subscribe()
 
     def subscribe(self):
         print("Sending Subscription Message to the Publisher")
         # serialize the listener address
         data = self.serialize_address(self.listener_ip, self.listener_port)
         print("sending bytes: ", data)
-        send = self.sender.sendto(data, self.publisher_address)
+        self.sender.sendto(data, self.publisher_address)
 
     def listener_receive(self):
         data = self.receive(self.listener)
